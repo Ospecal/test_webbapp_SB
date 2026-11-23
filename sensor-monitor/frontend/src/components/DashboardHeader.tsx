@@ -1,12 +1,15 @@
 
+
 import type { Theme } from "../hooks/useTheme";
 
 interface DashboardHeaderProps {
+  title: string;
   theme: Theme;
   onToggleTheme: () => void;
 }
 
 export default function DashboardHeader({
+  title,
   theme,
   onToggleTheme,
 }: DashboardHeaderProps) {
@@ -14,7 +17,7 @@ export default function DashboardHeader({
     <header className="dashboard-header">
       <div>
         <p className="eyebrow">SENSOR MONITORING</p>
-        <h1>Dashboard</h1>
+        <h1>{title}</h1>
       </div>
 
       <div className="header-actions">
@@ -34,3 +37,4 @@ export default function DashboardHeader({
     </header>
   );
 }
+
