@@ -33,12 +33,31 @@ export async function getLatestReading(): Promise<SensorReading | null> {
 /**
  * Retrieves historical sensor readings.
  */
-export async function getReadings(): Promise<SensorReading[]> {
-  const response = await apiFetch("/readings/");
 
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status}`);
+export async function getReadings(): Promise<SensorReading[]> {
+  const pageSize = 1000;
+  let offset = 0;
+  let allReadings: SensorReading[] = [];
+
+  while (true) {
+    const response = await apiFetch(
+      `/readings?limit=${pageSize}&offset=${offset}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const page: SensorReading[] = await response.json();
+
+    allReadings = [...allReadings, ...page];
+
+    if (page.length < pageSize) {
+      break;
+    }
+
+    offset += pageSize;
   }
 
-  return response.json();
+  return allReadings;
 }
