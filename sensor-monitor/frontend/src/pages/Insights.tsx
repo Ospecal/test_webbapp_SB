@@ -6,6 +6,10 @@ import TemperatureChart from "../components/charts/TemperatureChart";
 import HumidityChart from "../components/charts/HumidityChart";
 import BatteryChart from "../components/charts/BatteryChart";
 import MeasurementStats from "../components/MeasurementStats";
+import LightChart from "../components/charts/LightChart";
+import Co2Chart from "../components/charts/Co2Chart";
+import TvocChart from "../components/charts/TvocChart";
+import ParticulateChart from "../components/charts/ParticulateChart";
 
 type TimeRange = "1h" | "24h" | "7d" | "30d" | "all";
 
@@ -167,6 +171,10 @@ function Insights() {
             <TemperatureChart readings={filteredReadings} />
             <HumidityChart readings={filteredReadings} />
             <BatteryChart readings={filteredReadings} />
+            <LightChart readings={filteredReadings} />
+            <Co2Chart readings={filteredReadings} />
+            <TvocChart readings={filteredReadings} />
+            <ParticulateChart readings={filteredReadings} />
           </div>
         </>
       )}
