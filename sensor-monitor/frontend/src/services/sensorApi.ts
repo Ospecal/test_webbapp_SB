@@ -14,11 +14,29 @@ async function apiFetch(endpoint: string): Promise<Response> {
   });
 }
 
+// /**
+//  * Retrieves the latest sensor reading.
+//  * The API returns an array, even for the latest endpoint.
+//  */
+// export async function getLatestReading(): Promise<SensorReading | null> {
+//   const response = await apiFetch("/readings/latest");
+
+//   if (!response.ok) {
+//     throw new Error(`API error: ${response.status}`);
+//   }
+
+//   const readings: SensorReading[] = await response.json();
+
+//   return Array.isArray(readings) && readings.length > 0
+//     ? readings[0]
+//     : null;
+// }
+
 /**
- * Retrieves the latest sensor reading.
- * The API returns an array, even for the latest endpoint.
+ * Retrieves the latest reading for every sensor.
+ * The API returns an array of readings.
  */
-export async function getLatestReading(): Promise<SensorReading | null> {
+export async function getLatestReadings(): Promise<SensorReading[]> {
   const response = await apiFetch("/readings/latest");
 
   if (!response.ok) {
@@ -27,7 +45,7 @@ export async function getLatestReading(): Promise<SensorReading | null> {
 
   const readings: SensorReading[] = await response.json();
 
-  return readings.length > 0 ? readings[0] : null;
+  return Array.isArray(readings) ? readings : [];
 }
 
 /**

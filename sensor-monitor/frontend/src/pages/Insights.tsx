@@ -20,6 +20,15 @@ const timeRanges: { label: string; value: TimeRange }[] = [
 function Insights() {
   const { readings, loading, error } = useReadings();
   const [selectedRange, setSelectedRange] = useState<TimeRange>("24h");
+  const [selectedSensorId, setSelectedSensorId] = useState("");
+
+  const availableSensorIds = Array.from(
+  new Set(readings.map((reading) => reading.sensor_id))
+  );
+
+
+  const activeSensorId =
+  selectedSensorId || readings[0]?.sensor_id || "";  
 
   const rangeInMilliseconds: Record<Exclude<TimeRange, "all">, number> = {
     "1h": 60 * 60 * 1000,
@@ -28,10 +37,14 @@ function Insights() {
     "30d": 30 * 24 * 60 * 60 * 1000,
   };
 
+  const sensorReadings = readings.filter(
+    (reading) => reading.sensor_id === activeSensorId
+  );
+
   const filteredReadings =
     selectedRange === "all"
-      ? readings
-      : readings.filter((reading) => {
+      ? sensorReadings
+      : sensorReadings.filter((reading) => {
           const measuredAt = new Date(reading.measured_at).getTime();
           const cutoff =
             Date.now() - rangeInMilliseconds[selectedRange];
@@ -39,17 +52,17 @@ function Insights() {
           return Number.isFinite(measuredAt) && measuredAt >= cutoff;
         });
 
-  const temperatureValues = filteredReadings.map(
-    (reading) => reading.temperature_c
-  );
+  const temperatureValues = filteredReadings
+    .map((reading) => reading.temperature_c)
+    .filter((value): value is number => value !== null);
 
-  const humidityValues = filteredReadings.map(
-    (reading) => reading.humidity_pct
-  );
+  const humidityValues = filteredReadings
+    .map((reading) => reading.humidity_pct)
+    .filter((value): value is number => value !== null);
 
-  const batteryValues = filteredReadings.map(
-    (reading) => reading.battery_pct
-  );
+  const batteryValues = filteredReadings
+    .map((reading) => reading.battery_pct)
+    .filter((value): value is number => value !== null);
 
   return (
     <main className="insights-page">
@@ -69,7 +82,29 @@ function Insights() {
           </div>
         )}
       </div>
+      
+      {availableSensorIds.length > 1 && (
+        <div className="time-range-section">
+          <label className="time-range-label" htmlFor="sensor-select">
+            Select sensor
+          </label>
 
+          <select
+            id="sensor-select"
+            className="time-range-button"
+            value={activeSensorId}
+            onChange={(event) => setSelectedSensorId(event.target.value)}
+          >
+            {availableSensorIds.map((sensorId) => (
+              <option key={sensorId} value={sensorId}>
+                {sensorId}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}      
+
+      
       <div className="time-range-section">
         <span className="time-range-label">Time range</span>
 

@@ -1,10 +1,10 @@
 
 import { useEffect, useState } from "react";
-import { getLatestReading } from "../services/sensorApi";
+import { getLatestReadings } from "../services/sensorApi";
 import type { SensorReading } from "../types/sensor";
 
-export function useLatestReading() {
-  const [reading, setReading] = useState<SensorReading | null>(null);
+export function useLatestReading(sensorId?: string) {
+  const [readings, setReadings] = useState<SensorReading[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,12 +12,12 @@ export function useLatestReading() {
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
 
-    async function updateReading() {
+    async function updateReadings() {
       try {
-        const result = await getLatestReading();
+        const result = await getLatestReadings();
 
         if (active) {
-          setReading(result);
+          setReadings(result);
           setError(null);
         }
       } catch (err) {
@@ -31,12 +31,12 @@ export function useLatestReading() {
       } finally {
         if (active) {
           setLoading(false);
-          timer = setTimeout(updateReading, 10000);
+          timer = setTimeout(updateReadings, 10000);
         }
       }
     }
 
-    updateReading();
+    updateReadings();
 
     return () => {
       active = false;
@@ -44,5 +44,15 @@ export function useLatestReading() {
     };
   }, []);
 
-  return { reading, loading, error };
+  const selectedReading =
+    readings.find((reading) => reading.sensor_id === sensorId) ??
+    (!sensorId ? readings[0] ?? null : null);
+
+  return {
+    reading: selectedReading,
+    readings,
+    loading,
+    error,
+  };
 }
+
