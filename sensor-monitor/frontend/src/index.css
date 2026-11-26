@@ -754,3 +754,11 @@ button {
     font-size: 14px;
   }
 }
+
+.insights-chart-section {
+  margin-top: 32px;
+}
+
+.insights-chart-section .section-heading {
+  margin-bottom: 16px;
+}

@@ -68,6 +68,23 @@ function Insights() {
     .map((reading) => reading.battery_pct)
     .filter((value): value is number => value !== null);
 
+  const co2Values = filteredReadings
+    .map((reading) => reading.co2_ppm)
+    .filter((value): value is number => value !== null);
+
+  const tvocValues = filteredReadings
+    .map((reading) => reading.tvoc_ppb)
+    .filter((value): value is number => value !== null);
+
+  const pm25Values = filteredReadings
+    .map((reading) => reading.pm25_ugm3)
+    .filter((value): value is number => value !== null);
+
+  const pm10Values = filteredReadings
+    .map((reading) => reading.pm10_ugm3)
+    .filter((value): value is number => value !== null); 
+    
+
   return (
     <main className="insights-page">
       <div className="insights-intro">
@@ -165,9 +182,33 @@ function Insights() {
               unit="%"
               values={batteryValues}
             />
+
+            <MeasurementStats
+              title="CO₂"
+              unit="ppm"
+              values={co2Values}
+            />
+
+            <MeasurementStats
+              title="TVOC"
+              unit="ppb"
+              values={tvocValues}
+            />
+
+            <MeasurementStats
+              title="PM2.5"
+              unit="µg/m³"
+              values={pm25Values}
+            />
+
+            <MeasurementStats
+              title="PM10"
+              unit="µg/m³"
+              values={pm10Values}
+            />
           </div>
 
-          <div className="charts-grid">
+          {/* <div className="charts-grid">
             <TemperatureChart readings={filteredReadings} />
             <HumidityChart readings={filteredReadings} />
             <BatteryChart readings={filteredReadings} />
@@ -175,7 +216,51 @@ function Insights() {
             <Co2Chart readings={filteredReadings} />
             <TvocChart readings={filteredReadings} />
             <ParticulateChart readings={filteredReadings} />
-          </div>
+          </div> */}
+
+          <section className="insights-chart-section">
+            <div className="section-heading">
+              <div>
+                <h2>Environment</h2>
+                <p>Temperature, humidity and ambient light</p>
+              </div>
+            </div>
+
+            <div className="charts-grid">
+              <TemperatureChart readings={filteredReadings} />
+              <HumidityChart readings={filteredReadings} />
+              <LightChart readings={filteredReadings} />
+            </div>
+          </section>
+
+          <section className="insights-chart-section">
+            <div className="section-heading">
+              <div>
+                <h2>Air quality</h2>
+                <p>Carbon dioxide, volatile compounds and particulate matter</p>
+              </div>
+            </div>
+
+            <div className="charts-grid">
+              <Co2Chart readings={filteredReadings} />
+              <TvocChart readings={filteredReadings} />
+              <ParticulateChart readings={filteredReadings} />
+            </div>
+          </section>
+
+          <section className="insights-chart-section">
+            <div className="section-heading">
+              <div>
+                <h2>Device</h2>
+                <p>Battery performance over time</p>
+              </div>
+            </div>
+
+            <div className="charts-grid">
+              <BatteryChart readings={filteredReadings} />
+            </div>
+          </section>
+
         </>
       )}
 
